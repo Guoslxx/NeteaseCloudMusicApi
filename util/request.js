@@ -3,8 +3,9 @@ const request = require('request')
 const queryString = require('querystring')
 const PacProxyAgent = require('pac-proxy-agent')
 const zlib = require('zlib')
+const config = require('../config');
 
-// request.debug = true // 开启可看到更详细信息
+request.debug = true // 开启可看到更详细信息
 
 const chooseUserAgent = ua => {
   const userAgentList = [
@@ -96,11 +97,11 @@ const createRequest = (method, url, data, options) => {
       data = encrypt.eapi(options.url, data)
       url = url.replace(/\w*api/, 'eapi')
     }
-
     const answer = { status: 500, body: {}, cookie: [] }
+    const _proxy = config.proxy || '';
     const settings = {
       method: method,
-      url: url,
+      url: _proxy + url,
       headers: headers,
       body: queryString.stringify(data)
     }
@@ -130,10 +131,10 @@ const createRequest = (method, url, data, options) => {
               zlib.unzip(body, function (err, buffer) {
                 const _buffer = err ? body : buffer
                 try {
-                  try{
+                  try {
                     answer.body = JSON.parse(encrypt.decrypt(_buffer).toString())
                     answer.status = answer.body.code || res.statusCode
-                  } catch(e){
+                  } catch (e) {
                     answer.body = JSON.parse(_buffer.toString())
                     answer.status = res.statusCode
                   }

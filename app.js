@@ -6,7 +6,6 @@ const request = require('./util/request')
 const packageJSON = require('./package.json')
 const exec = require('child_process').exec
 const cache = require('apicache').middleware
-
 // version check
 exec('npm info NeteaseCloudMusicApi version', (err, stdout, stderr) => {
   if(!err){
@@ -55,9 +54,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // router
 const special = {
-  'daily_signin.js': '/daily_signin',
-  'fm_trash.js': '/fm_trash',
-  'personal_fm.js': '/personal_fm'
+  'daily_signin.js': '/daily_signin', // 签到
+  'fm_trash.js': '/fm_trash', // 回收站
+  'personal_fm.js': '/personal_fm'// 
 }
 
 fs.readdirSync(path.join(__dirname, 'module')).reverse().forEach(file => {
